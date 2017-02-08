@@ -1,0 +1,51 @@
+Installing Catalyst Arch
+
+Install the drivers:
+
+sudo pacman-key -r 653C3094
+sudo pacman-key --lsign-key 653C3094
+
+sudo nano /etc/pacman.conf
+add:
+[xorg116]
+Server = http://catalyst.wirephire.com/repo/xo...
+[catalyst]
+Server = http://catalyst.wirephire.com/repo/ca...
+
+get updates:
+sudo pacman -Syuu
+
+uninstall the open drivers:
+sudo pacman -Rcc lib32-ati-dri ati-dri xf86-video-ati
+
+install new drivers:
+sudo pacman -S catalyst-hook catalyst-libgl catalyst-utils acpid qt4
+
+install extra components (optional but needed for gaming):
+sudo pacman -S opencl-catalyst lib32-catalyst-utils lib32-catalyst-libgl lib32-opencl-catalyst
+
+(DONT RESTART YET)
+
+Enable Drivers and set to start on boot:
+sudo systemctl enable atieventsd
+sudo systemctl start atieventsd
+sudo systemctl enable catalyst-hook
+sudo systemctl start catalyst-hook
+
+Configure X (this is for one monitor):
+aticonfig --initial
+
+Editing boot blacklist:
+if this exists:
+/etc/modprobe.d/modprobe.conf
+add this to it:
+blacklist radeon
+
+Disable kernel mode setting:
+sudo nano /etc/default/grub
+add:
+GRUB_CMDLINE_LINUX="nomodeset"
+update grub:
+grub-mkconfig -o /boot/grub/grub.cfg
+
+sudo reboot
